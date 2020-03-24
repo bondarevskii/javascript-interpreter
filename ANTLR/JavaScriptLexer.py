@@ -1,7 +1,7 @@
 # Generated from JavaScriptLexer.g4 by ANTLR 4.8
 from antlr4 import *
 from io import StringIO
-from typing.io import TextIO
+from typing import TextIO
 import sys
 
 
@@ -915,62 +915,62 @@ class JavaScriptLexer(JavaScriptBaseLexer):
 
     def HashBangLine_sempred(self, localctx:RuleContext, predIndex:int):
             if predIndex == 0:
-                return  this.IsStartOfFile()
+                return  self.IsStartOfFile()
          
 
     def RegularExpressionLiteral_sempred(self, localctx:RuleContext, predIndex:int):
             if predIndex == 1:
-                return this.IsRegexPossible()
+                return self.IsRegexPossible()
          
 
     def OctalIntegerLiteral_sempred(self, localctx:RuleContext, predIndex:int):
             if predIndex == 2:
-                return !this.IsStrictMode()
+                return not (self.IsStrictMode())
          
 
     def Implements_sempred(self, localctx:RuleContext, predIndex:int):
             if predIndex == 3:
-                return this.IsStrictMode()
+                return self.IsStrictMode()
          
 
     def Let_sempred(self, localctx:RuleContext, predIndex:int):
             if predIndex == 4:
-                return this.IsStrictMode()
+                return self.IsStrictMode()
          
 
     def Private_sempred(self, localctx:RuleContext, predIndex:int):
             if predIndex == 5:
-                return this.IsStrictMode()
+                return self.IsStrictMode()
          
 
     def Public_sempred(self, localctx:RuleContext, predIndex:int):
             if predIndex == 6:
-                return this.IsStrictMode()
+                return self.IsStrictMode()
          
 
     def Interface_sempred(self, localctx:RuleContext, predIndex:int):
             if predIndex == 7:
-                return this.IsStrictMode()
+                return self.IsStrictMode()
          
 
     def Package_sempred(self, localctx:RuleContext, predIndex:int):
             if predIndex == 8:
-                return this.IsStrictMode()
+                return self.IsStrictMode()
          
 
     def Protected_sempred(self, localctx:RuleContext, predIndex:int):
             if predIndex == 9:
-                return this.IsStrictMode()
+                return self.IsStrictMode()
          
 
     def Static_sempred(self, localctx:RuleContext, predIndex:int):
             if predIndex == 10:
-                return this.IsStrictMode()
+                return self.IsStrictMode()
          
 
     def Yield_sempred(self, localctx:RuleContext, predIndex:int):
             if predIndex == 11:
-                return this.IsStrictMode()
+                return self.IsStrictMode()
          
 
 
