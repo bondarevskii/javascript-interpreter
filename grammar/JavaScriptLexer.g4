@@ -4,8 +4,6 @@
  * Copyright (c) 2014 by Bart Kiers (original author) and Alexandre Vitorelli (contributor -> ported to CSharp)
  * Copyright (c) 2017 by Ivan Kochurkin (Positive Technologies):
     added ECMAScript 6 support, cleared and transformed to the universal grammar.
- * Copyright (c) 2018 by Juan Alvarez (contributor -> ported to Go)
- * Copyright (c) 2019 by Student Main (contributor -> ES2020)
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -15,7 +13,7 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
  *
@@ -30,21 +28,24 @@
  */
 lexer grammar JavaScriptLexer;
 
+@header {
+from .JavaScriptBaseLexer import JavaScriptBaseLexer
+}
+
 channels { ERROR }
 
 options { superClass=JavaScriptBaseLexer; }
 
-HashBangLine:                   { this.IsStartOfFile()}? '#!' ~[\r\n\u2028\u2029]*; // only allowed at start
 MultiLineComment:               '/*' .*? '*/'             -> channel(HIDDEN);
 SingleLineComment:              '//' ~[\r\n\u2028\u2029]* -> channel(HIDDEN);
-RegularExpressionLiteral:       '/' RegularExpressionFirstChar RegularExpressionChar* {this.IsRegexPossible()}? '/' IdentifierPart*;
+RegularExpressionLiteral:       '/' RegularExpressionChar+ {self.IsRegexPossible()}? '/' IdentifierPart*;
 
 OpenBracket:                    '[';
 CloseBracket:                   ']';
 OpenParen:                      '(';
 CloseParen:                     ')';
-OpenBrace:                      '{' {this.ProcessOpenBrace();};
-CloseBrace:                     '}' {this.ProcessCloseBrace();};
+OpenBrace:                      '{' {self.ProcessOpenBrace()};
+CloseBrace:                     '}' {self.ProcessCloseBrace()};
 SemiColon:                      ';';
 Comma:                          ',';
 Assign:                         '=';
@@ -61,9 +62,6 @@ Not:                            '!';
 Multiply:                       '*';
 Divide:                         '/';
 Modulus:                        '%';
-Power:                          '**';
-NullCoalesce:                   '??';
-Hashtag:                        '#';
 RightShiftArithmetic:           '>>';
 LeftShiftArithmetic:            '<<';
 RightShiftLogical:              '>>>';
@@ -91,7 +89,6 @@ RightShiftLogicalAssign:        '>>>=';
 BitAndAssign:                   '&=';
 BitXorAssign:                   '^=';
 BitOrAssign:                    '|=';
-PowerAssign:                    '**=';
 ARROW:                          '=>';
 
 /// Null Literals
@@ -105,22 +102,17 @@ BooleanLiteral:                 'true'
 
 /// Numeric Literals
 
-DecimalLiteral:                 DecimalIntegerLiteral '.' [0-9] [0-9_]* ExponentPart?
-              |                 '.' [0-9] [0-9_]* ExponentPart?
+DecimalLiteral:                 DecimalIntegerLiteral '.' [0-9]* ExponentPart?
+              |                 '.' [0-9]+ ExponentPart?
               |                 DecimalIntegerLiteral ExponentPart?
               ;
 
 /// Numeric Literals
 
-HexIntegerLiteral:              '0' [xX] [0-9a-fA-F] HexDigit*;
-OctalIntegerLiteral:            '0' [0-7]+ {!this.IsStrictMode()}?;
-OctalIntegerLiteral2:           '0' [oO] [0-7] [_0-7]*;
-BinaryIntegerLiteral:           '0' [bB] [01] [_01]*;
-
-BigHexIntegerLiteral:           '0' [xX] [0-9a-fA-F] HexDigit* 'n';
-BigOctalIntegerLiteral:         '0' [oO] [0-7] [_0-7]* 'n';
-BigBinaryIntegerLiteral:        '0' [bB] [01] [_01]* 'n';
-BigDecimalIntegerLiteral:       DecimalIntegerLiteral 'n';
+HexIntegerLiteral:              '0' [xX] HexDigit+;
+OctalIntegerLiteral:            '0' [0-7]+ {not self.IsSrictMode()}?;
+OctalIntegerLiteral2:           '0' [oO] [0-7]+;
+BinaryIntegerLiteral:           '0' [bB] [01]+;
 
 /// Keywords
 
@@ -150,8 +142,6 @@ Throw:                          'throw';
 Delete:                         'delete';
 In:                             'in';
 Try:                            'try';
-As:                             'as';
-From:                           'from';
 
 /// Future Reserved Words
 
@@ -163,31 +153,28 @@ Const:                          'const';
 Export:                         'export';
 Import:                         'import';
 
-Async:                          'async';
-Await:                          'await';
-
-/// The following tokens are also considered to be FutureReservedWords
+/// The following tokens are also considered to be FutureReservedWords 
 /// when parsing strict mode
 
-Implements:                     'implements' {this.IsStrictMode()}?;
-Let:                            'let' {this.IsStrictMode()}?;
-Private:                        'private' {this.IsStrictMode()}?;
-Public:                         'public' {this.IsStrictMode()}?;
-Interface:                      'interface' {this.IsStrictMode()}?;
-Package:                        'package' {this.IsStrictMode()}?;
-Protected:                      'protected' {this.IsStrictMode()}?;
-Static:                         'static' {this.IsStrictMode()}?;
-Yield:                          'yield' {this.IsStrictMode()}?;
+Implements:                     'implements' {self.IsSrictMode()}?;
+Let:                            'let' {self.IsSrictMode()}?;
+Private:                        'private' {self.IsSrictMode()}?;
+Public:                         'public' {self.IsSrictMode()}?;
+Interface:                      'interface' {self.IsSrictMode()}?;
+Package:                        'package' {self.IsSrictMode()}?;
+Protected:                      'protected' {self.IsSrictMode()}?;
+Static:                         'static' {self.IsSrictMode()}?;
+Yield:                          'yield' {self.IsSrictMode()}?;
 
 /// Identifier Names and Identifiers
 
 Identifier:                     IdentifierStart IdentifierPart*;
+
 /// String Literals
 StringLiteral:                 ('"' DoubleStringCharacter* '"'
-             |                  '\'' SingleStringCharacter* '\'') {this.ProcessStringLiteral();}
+             |                  '\'' SingleStringCharacter* '\'') {self.ProcessStringLiteral()}
              ;
 
-// TODO: `${`tmp`}`
 TemplateStringLiteral:          '`' ('\\`' | ~'`')* '`';
 
 WhiteSpaces:                    [\t\u000B\u000C\u0020\u00A0]+ -> channel(HIDDEN);
@@ -234,7 +221,6 @@ fragment HexEscapeSequence
 
 fragment UnicodeEscapeSequence
     : 'u' HexDigit HexDigit HexDigit HexDigit
-    | 'u' '{' HexDigit HexDigit+ '}'
     ;
 
 fragment ExtendedUnicodeEscapeSequence
@@ -260,16 +246,16 @@ fragment LineContinuation
     ;
 
 fragment HexDigit
-    : [_0-9a-fA-F]
+    : [0-9a-fA-F]
     ;
 
 fragment DecimalIntegerLiteral
     : '0'
-    | [1-9] [0-9_]*
+    | [1-9] [0-9]*
     ;
 
 fragment ExponentPart
-    : [eE] [+-]? [0-9_]+
+    : [eE] [+-]? [0-9]+
     ;
 
 fragment IdentifierPart
@@ -517,8 +503,10 @@ fragment UnicodeLetter
     | [\u3105-\u312C]
     | [\u3131-\u318E]
     | [\u31A0-\u31B7]
-    | [\u3400-\u4DBF]
-    | [\u4E00-\u9FFF]
+    | [\u3400]
+    | [\u4DB5]
+    | [\u4E00]
+    | [\u9FA5]
     | [\uA000-\uA48C]
     | [\uAC00]
     | [\uD7A3]
@@ -556,7 +544,7 @@ fragment UnicodeCombiningMark
     | [\u0591-\u05A1]
     | [\u05A3-\u05B9]
     | [\u05BB-\u05BD]
-    | [\u05BF]
+    | [\u05BF] 
     | [\u05C1-\u05C2]
     | [\u05C4]
     | [\u064B-\u0655]
@@ -683,12 +671,6 @@ fragment UnicodeConnectorPunctuation
     | [\uFE4D-\uFE4F]
     | [\uFF3F]
     | [\uFF65]
-    ;
-
-fragment RegularExpressionFirstChar
-    : ~[*\r\n\u2028\u2029\\/[]
-    | RegularExpressionBackslashSequence
-    | '[' RegularExpressionClassChar* ']'
     ;
 
 fragment RegularExpressionChar
