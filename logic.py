@@ -29,3 +29,7 @@ class Logic:
     def toStringTree(self, parser, tree):
         string = tree.toStringTree(parser.ruleNames)
         return string
+
+
+temp = Logic("code.js")
+print(temp.toStringTree(temp.getParser(temp.getLexer()), temp.getTree(temp.getParser(temp.getLexer()))))

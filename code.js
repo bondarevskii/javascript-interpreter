@@ -1,2 +1,6 @@
-var a = 0;
-a = a + 1;
+var a = 42;
+var b = 5;
+function addA(d) {
+    return a + d;
+}
+var c = addA(2) + b;
