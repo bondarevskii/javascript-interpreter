@@ -2,7 +2,7 @@ from logic import Logic
 
 
 def test_lexer():
-    file = "/Tests/source/lexer-test-1.js"
+    file = "source/lexer-test-1.js"
     logic = Logic(file)
     excepted_result = ["var", " ", "a", " ", "=", " ", "0", ";", "\r", "\n",
                        "a", " ", "=", " ", "a", " ", "+", " ", "1", ";"]

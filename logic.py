@@ -31,5 +31,5 @@ class Logic:
         return string
 
 
-temp = Logic("code.js")
-print(temp.toStringTree(temp.getParser(temp.getLexer()), temp.getTree(temp.getParser(temp.getLexer()))))
+#temp = Logic("code.js")
+#print(temp.toStringTree(temp.getParser(temp.getLexer()), temp.getTree(temp.getParser(temp.getLexer()))))
