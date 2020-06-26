@@ -8,28 +8,24 @@ class Logic:
     def __init__(self, file):
         self.file = file
 
-    def getLexer(self):
+    def get_lexer(self):
         input_stream = FileStream(self.file)
         lexer = JavaScriptLexer(input_stream)
         return lexer
 
-    def getTokens(self, lexer):
+    def get_tokens(self, lexer):
         result = lexer.getAllTokens()
         return result
 
-    def getParser(self, lexer):
+    def get_parser(self, lexer):
         stream = CommonTokenStream(lexer)
         parser = JavaScriptParser(stream)
         return parser
 
-    def getTree(self, parser):
+    def get_tree(self, parser):
         tree = parser.program()
         return tree
 
-    def toStringTree(self, parser, tree):
+    def to_string_tree(self, parser, tree):
         string = tree.toStringTree(parser.ruleNames)
         return string
-
-
-temp = Logic("code.js")
-print(temp.toStringTree(temp.getParser(temp.getLexer()), temp.getTree(temp.getParser(temp.getLexer()))))
